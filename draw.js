@@ -1,3 +1,12 @@
+import { add, multiple, unit } from "./vec3.js"
+import { direction } from "./ray.js"
+
+
+function color(r) {
+  let unitV = unit(direction(r))
+  let t = 0.5 * (unitV[1] + 1.0)
+  return add(multiple((1.0 - t), [1, 1, 1]), multiple(t, [.5, .7, 1]))
+}
 
 export function draw(canvas) {
   const { width, height } = canvas
@@ -6,26 +15,28 @@ export function draw(canvas) {
   
   const data = imgData.data
 
-  let c = 0
+  let lowerLeftCorner = [-2.0, -1.0, -1.0]
+  let horizontal = [4.0, 0.0, 0.0]
+  let vertical = [0.0, 2.0, 0.0]
+  let origin = [0.0, 0.0, 0.0]
+
   for (let j = 0; j < height; j ++) {
     for (let i = 0; i < width; i ++) {
-      let r = i / width
-      let g = (height - j) / height
-      let b = 0.2
-      let ir = 255.99 * r
-      let ig = 255.99 * g
-      let ib = 255.99 * b
-      
+      let u = i / width
+      let v = (height - j) / height
+      let r = [origin, add(lowerLeftCorner, multiple(u, horizontal), multiple(v, vertical))]
+
+      let c = color(r)
+
       const from = width * 4 * j + i * 4
-      data[from] = ir
-      data[from+1] = ig
-      data[from+2] = ib
+      data[from] = c[0] * 255.99
+      data[from+1] = c[1] * 255.99
+      data[from+2] = c[2] * 255.99
       data[from+3] = 255
     }
 
     ctx.putImageData(imgData,0,0)
   }
-  console.log(c)
 
   console.log(imgData)
 }
