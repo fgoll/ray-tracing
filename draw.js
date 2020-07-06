@@ -1,12 +1,26 @@
-import { add, multiple, unit } from "./vec3.js"
+import { add, multiple, unit, minus, dot } from "./vec3.js"
 import { direction } from "./ray.js"
 
+function hit(center, radius, r) {
+  let [origin, _] = r
+  let oc = minus(origin, center)
+
+  let a = dot(direction(r), direction(r))
+  let b = 2 * dot(direction(r), oc)
+  let c = dot(oc, oc) - radius * radius
+
+  return (b*b - 4*a*c) > 0
+}
 
 function color(r) {
+  if (hit([0, 0, -1], 0.5, r)) {
+    return [1, 0, 0]
+  }
   let unitV = unit(direction(r))
   let t = 0.5 * (unitV[1] + 1.0)
   return add(multiple((1.0 - t), [1, 1, 1]), multiple(t, [.5, .7, 1]))
 }
+
 
 export function draw(canvas) {
   const { width, height } = canvas
