@@ -1,5 +1,5 @@
 import { add, multiple, unit, minus, dot } from "./vec3.js"
-import { direction } from "./ray.js"
+import { direction, pointer } from "./ray.js"
 
 function hit(center, radius, r) {
   let [origin, _] = r
@@ -9,15 +9,24 @@ function hit(center, radius, r) {
   let b = 2 * dot(direction(r), oc)
   let c = dot(oc, oc) - radius * radius
 
-  return (b*b - 4*a*c) > 0
+  let discriminant = b * b - 4 * a * c
+  if (discriminant < 0) {
+    return -1.0
+  }
+
+  return (-b - Math.sqrt(discriminant)) / (2.0 * a)
 }
 
 function color(r) {
-  if (hit([0, 0, -1], 0.5, r)) {
-    return [1, 0, 0]
+  let C = [0, 0, -1]
+  let t = hit(C, 0.5, r)
+  if (t > 0.0) {
+    let P = pointer(r, t)
+    let N = unit(minus(P, C))
+    return multiple(0.5, [N[0] + 1, N[1] + 1, N[2] + 1])
   }
   let unitV = unit(direction(r))
-  let t = 0.5 * (unitV[1] + 1.0)
+  t = 0.5 * (unitV[1] + 1.0)
   return add(multiple((1.0 - t), [1, 1, 1]), multiple(t, [.5, .7, 1]))
 }
 
