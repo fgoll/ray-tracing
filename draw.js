@@ -1,4 +1,4 @@
-import { add, multiple, unit, minus, dot } from "./vec3.js"
+import { add, multiple, unit, minus, dot, divide } from "./vec3.js"
 import { direction, pointer } from "./ray.js"
 import * as ball from './graphics/ball.js'
 
@@ -26,6 +26,7 @@ function color(r, list) {
 
 export function draw(canvas) {
   const { width, height } = canvas
+  const ns = 20
   const ctx = canvas.getContext('2d')
   const imgData = ctx.getImageData(0, 0, width, height)
   
@@ -43,12 +44,15 @@ export function draw(canvas) {
 
   for (let j = 0; j < height; j ++) {
     for (let i = 0; i < width; i ++) {
-      let u = i / width
-      let v = (height - j) / height
-      let r = [origin, add(lowerLeftCorner, multiple(u, horizontal), multiple(v, vertical))]
+      let c = [0, 0, 0]
+      for (let s = 0; s < ns; s ++) {
+        let u = (i + Math.random()) / width
+        let v = ((height - j) + Math.random()) / height
+        let r = [origin, add(lowerLeftCorner, multiple(u, horizontal), multiple(v, vertical))]
+        c = add(c, color(r, list)) 
+      }
 
-      let c = color(r, list)
-
+      c = divide(c, ns)
       const from = width * 4 * j + i * 4
       data[from] = c[0] * 255.99
       data[from+1] = c[1] * 255.99
