@@ -1,6 +1,7 @@
 import { add, multiple, unit, minus, dot, divide } from "./vec3.js"
 import { direction, pointer } from "./ray.js"
 import * as ball from './graphics/ball.js'
+import { getRay } from './camera.js'
 
 function color(r, list) {
   let far = Number.MAX_VALUE
@@ -32,11 +33,6 @@ export function draw(canvas) {
   
   const data = imgData.data
 
-  let lowerLeftCorner = [-2.0, -1.0, -1.0]
-  let horizontal = [4.0, 0.0, 0.0]
-  let vertical = [0.0, 2.0, 0.0]
-  let origin = [0.0, 0.0, 0.0]
-
   let list = [
     ball.createHit([0, 0, -1], 0.5),
     ball.createHit([0, -100.5, -1], 100)
@@ -48,7 +44,8 @@ export function draw(canvas) {
       for (let s = 0; s < ns; s ++) {
         let u = (i + Math.random()) / width
         let v = ((height - j) + Math.random()) / height
-        let r = [origin, add(lowerLeftCorner, multiple(u, horizontal), multiple(v, vertical))]
+        
+        let r = getRay(u, v)
         c = add(c, color(r, list)) 
       }
 
