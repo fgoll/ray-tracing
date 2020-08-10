@@ -4,3 +4,5 @@
 > [光线追踪(一)](https://github.com/fgoll/ray-tracing/issues/1)
 
 > [光线追踪(二)](https://github.com/fgoll/ray-tracing/issues/2)
+
+> [光线追踪(三)](https://github.com/fgoll/ray-tracing/issues/3)
