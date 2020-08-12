@@ -1,25 +1,38 @@
 import { add, multiple, unit, minus, dot, divide } from "./vec3.js"
-import { direction, pointer } from "./ray.js"
 import * as ball from './graphics/ball.js'
-import { getRay } from './camera.js'
+import { getScreenRay } from './camera.js'
 
-function color(r, list) {
+function random() {
+  while (true) {
+    let v = minus(multiple([Math.random(), Math.random(), Math.random()], 2), [1, 1, 1]) 
+    if (dot(v, v) >= 1) continue
+    return v
+  }
+}
+
+function color(r, list, depth) {
   let far = Number.MAX_VALUE
   let rec
+  if (depth <= 0)
+    return [0, 0, 0]
+
   for (let i = 0; i < list.length; i ++) {
     let tempRec = list[i](r, 0.0, far)
-    // console.log(tempRec)
     if (tempRec) {
       far = tempRec[0]
       rec = tempRec
     }
   }
-// console.log(rec)
+
   if (rec) {
-    let N = rec[2]
-    return multiple(0.5, [N[0] + 1, N[1] + 1, N[2] + 1])
+    let [_, P, N] = rec
+    let target = add(P, N, random())
+
+    return multiple(0.5, color([P, minus(target, P)], list, --depth))
   }
-  let unitV = unit(direction(r))
+
+  const [_, direction] = r 
+  let unitV = unit(direction)
   let t = 0.5 * (unitV[1] + 1.0)
   return add(multiple((1.0 - t), [1, 1, 1]), multiple(t, [.5, .7, 1]))
 }
@@ -27,9 +40,10 @@ function color(r, list) {
 
 export function draw(canvas) {
   const { width, height } = canvas
-  const ns = 20
+  const ns =  10
   const ctx = canvas.getContext('2d')
   const imgData = ctx.getImageData(0, 0, width, height)
+  let depth = 50
   
   const data = imgData.data
 
@@ -45,15 +59,15 @@ export function draw(canvas) {
         let u = (i + Math.random()) / width
         let v = ((height - j) + Math.random()) / height
         
-        let r = getRay(u, v)
-        c = add(c, color(r, list)) 
+        let r = getScreenRay(u, v)
+        c = add(c, color(r, list, depth)) 
       }
 
       c = divide(c, ns)
       const from = width * 4 * j + i * 4
-      data[from] = c[0] * 255.99
-      data[from+1] = c[1] * 255.99
-      data[from+2] = c[2] * 255.99
+      data[from] = c[0] * 255
+      data[from+1] = c[1] * 255
+      data[from+2] = c[2] * 255
       data[from+3] = 255
     }
 
