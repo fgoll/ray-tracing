@@ -1,7 +1,7 @@
 import { pointer } from "../ray.js"
 import { unit, minus, dot } from "../vec3.js"
 
-export function hit(center, radius, ray, tMin, tMax) {
+export function hit(center, radius, ray, tMin, tMax, scatter) {
   let [origin, direction] = ray
 // console.log(ray)
   let oc = minus(origin, center) // A - C
@@ -15,19 +15,19 @@ export function hit(center, radius, ray, tMin, tMax) {
     let p = pointer(ray, t)
 
     if (t < tMax && t > tMin) {
-      return [t, p, unit(minus(p, center))]
+      return [t, p, unit(minus(p, center)), scatter]
     }
     t = (-b + Math.sqrt(discriminant)) / (2.0 * a)
     if (t < tMax && t > tMin) {
-      return [t, p, unit(minus(p, center))]
+      return [t, p, unit(minus(p, center)), scatter]
     }
   }
 
   return null
 }
 
-export function createHit(c, radius) {
+export function createHit(c, radius, scatter) {
   return (ray, tMin, tMax) => {
-    return hit(c, radius, ray, tMin, tMax)
+    return hit(c, radius, ray, tMin, tMax, scatter)
   }
 }

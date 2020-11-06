@@ -1,14 +1,7 @@
 import { add, multiple, unit, minus, dot, divide } from "./vec3.js"
 import * as ball from './graphics/ball.js'
 import { getScreenRay } from './camera.js'
-
-function random() {
-  while (true) {
-    let v = minus(multiple([Math.random(), Math.random(), Math.random()], 2), [1, 1, 1]) 
-    if (dot(v, v) >= 1) continue
-    return v
-  }
-}
+import { scatter as lambertian, scatter } from './materials/lambertian.js'
 
 function color(r, list, depth) {
   let far = Number.MAX_VALUE
@@ -17,7 +10,8 @@ function color(r, list, depth) {
     return [0, 0, 0]
 
   for (let i = 0; i < list.length; i ++) {
-    let tempRec = list[i](r, 0.0, far)
+    const [hit, scatter] = list[i]
+    let tempRec = hit(r, 0.0, far)
     if (tempRec) {
       far = tempRec[0]
       rec = tempRec
@@ -25,10 +19,12 @@ function color(r, list, depth) {
   }
 
   if (rec) {
-    let [_, P, N] = rec
-    let target = add(P, N, random())
+    let [_, P, N, scatter] = rec
+    // let target = add(P, N, random())
 
-    return multiple(0.5, color([P, minus(target, P)], list, --depth))
+    const [attenuation, scatterRay] = scatter(P, N)
+
+    return multiple(attenuation, color(scatterRay, list, --depth))
   }
 
   const [_, direction] = r 
@@ -48,8 +44,8 @@ export function draw(canvas) {
   const data = imgData.data
 
   let list = [
-    ball.createHit([0, 0, -1], 0.5),
-    ball.createHit([0, -100.5, -1], 100)
+    [ball.createHit([0, 0, -1], 0.5, lambertian([0.5, 0.5, 0.5]))],
+    [ball.createHit([0, -100.5, -1], 100, lambertian(0.5, 0.5, 0.5))]
   ]
 
   for (let j = 0; j < height; j ++) {
