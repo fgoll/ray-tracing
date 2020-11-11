@@ -49,7 +49,7 @@ export function draw(canvas) {
 
   let list = [
     ball.createHit([0, 0, -1], 0.5, lambertian([0.8,0.3,0.3])),
-    ball.createHit([0, -100.5, -1], 100, lambertian([0.8, 0.8, 0])),
+    ball.createHit([0, -100.5, -1], 100, metal([0.8, 0.8, 0])),
     ball.createHit([-1, 0, -1], 0.5, metal([0.8, 0.8, 0.8])),
     ball.createHit([1, 0, -1], 0.5, metal([0.8, 0.6, 0.2])),
   ]
