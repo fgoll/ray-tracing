@@ -15,7 +15,7 @@ function random() {
  */
 export function scatter(attenuation) {
   
-  return function(P, N) {
+  return function(r, P, N) {
     let target = add(P, N, random())
 
     return [attenuation, [P, minus(target, P)]]

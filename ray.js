@@ -4,3 +4,7 @@ export function pointer(r, t) {
   const [a, b] = r
   return add(a, multiple(t, b))
 }
+
+export function direction([a, b]) {
+  return b
+}
