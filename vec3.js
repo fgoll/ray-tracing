@@ -37,6 +37,10 @@ export function length(v) {
   return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2])
 }
 
+export function squared(v) {
+  return v[0] * v[0] + v[1] * v[1] + v[2] * v[2]
+}
+
 export function unit(v) {
   let k = 1 / length(v)
 
