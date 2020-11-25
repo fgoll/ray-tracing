@@ -6,7 +6,6 @@ import { scatter as metal } from './materials/metal.js'
 import { scatter as dielectrics } from './materials/dielectrics.js'
 
 function color(r, list, depth) {
-  if (depth <= 0) return [0, 0, 0]
 
   let far = Number.MAX_VALUE
   let rec
@@ -18,18 +17,18 @@ function color(r, list, depth) {
       rec = tempRec
     }
   }
-
   if (rec) {
     let [_, P, N, scatter, isFront] = rec
     // let target = add(P, N, random())
-
+    
     const result = scatter(r, rec)
 
-    if (!result) {
-      return [0,0,0]
+    if (depth < 50 && result) {
+      const [attenuation, scatterRay] = result
+      return multiple(attenuation, color(scatterRay, list, depth + 1))
     }
-    const [attenuation, scatterRay] = result
-    return multiple(attenuation, color(scatterRay, list, --depth))
+
+    return [0,0,0]
   }
 
   const [_, direction] = r 
@@ -63,7 +62,7 @@ export function draw(canvas) {
         let v = ((height - j) + Math.random()) / height
         
         let r = getScreenRay(u, v)
-        c = add(c, color(r, list, depth)) 
+        c = add(c, color(r, list, 0)) 
       }
 
       c = divide(c, ns)

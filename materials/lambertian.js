@@ -1,13 +1,6 @@
 /** 漫反射材质 */
 import { add, multiple, minus, dot } from "../vec3.js"
-
-function random() {
-  while (true) {
-    let v = minus(multiple([Math.random(), Math.random(), Math.random()], 2), [1, 1, 1]) 
-    if (dot(v, v) >= 1) continue
-    return v
-  }
-}
+import { random } from './helper.js'
 
 /**
  * 
