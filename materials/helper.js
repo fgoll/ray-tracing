@@ -1,4 +1,5 @@
-import { add, multiple, minus, dot, squared } from "../vec3.js"
+import { direction } from "../ray.js"
+import { add, multiple, minus, dot, squared, unit } from "../vec3.js"
 
 export function random() {
   while (true) {
@@ -12,15 +13,17 @@ export function reflect(r, n) {
   return minus(r, multiple(2 * dot(r, n), n))
 }
 
-export function refraction(r, n, ratio) {
-
-  const cos = Math.min(dot(multiple(-1, r), n), 1)
+export function refract(r, n, ratio) {
+  const uv = unit(r)
+  const cos = dot(multiple(-1, r), n)
   const sin = Math.sqrt(1 - cos * cos)
-  if (sin * ratio > 1.0) {
-    return reflect(r, n)
-  } 
-  const perp = multiple(ratio, minus(r, multiple(cos, n)))
-  const cos2 = Math.abs(1 - squared(perp))
+  
+  const cos2 = 1 - ratio * ratio * (1 - cos * cos)
+  // if (cos2 <= 0) {
+  //   // return reflect(r, n)
+  // } 
+  const perp = multiple(ratio, minus(uv, multiple(cos, n)))
   const parallel = multiple(n, Math.sqrt(cos2))
+
   return minus(perp, parallel)
 }
