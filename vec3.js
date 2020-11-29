@@ -42,7 +42,8 @@ export function squared(v) {
 }
 
 export function unit(v) {
-  let k = 1 / length(v)
+  // let k = 1 / length(v)
 
+  return divide(v, length(v))
   return [v[0] * k, v[1] * k, v[2] * k]
 }

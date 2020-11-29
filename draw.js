@@ -48,9 +48,10 @@ export function draw(canvas) {
   const data = imgData.data
 
   let list = [
-    ball.createHit([0, 0, -1], 0.5, lambertian([0.8, 0.8, 0.3])),
+    ball.createHit([0, 0, -1], 0.5, lambertian([0.1, 0.2, 0.5])),
     ball.createHit([0, -100.5, -1], 100, lambertian([0.8, 0.8, 0])),
     ball.createHit([-1, 0, -1], 0.5, dielectrics(1.5)),
+    ball.createHit([-1, 0, -1], -0.45, dielectrics(1.5)),
     ball.createHit([1, 0, -1], 0.5, metal([0.8, 0.6, 0.2])),
   ]
 
