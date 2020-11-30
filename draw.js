@@ -1,4 +1,4 @@
-import { add, multiple, unit, minus, dot, divide } from "./vec3.js"
+import { add, multiple, unit, minus, dot, divide, length } from "./vec3.js"
 import * as ball from './graphics/ball.js'
 import { getCamera, getScreenRay } from './camera.js'
 import { scatter as lambertian } from './materials/lambertian.js'
@@ -43,7 +43,10 @@ export function draw(canvas) {
   const ns =  10
   const ctx = canvas.getContext('2d')
   const imgData = ctx.getImageData(0, 0, width, height)
-  const camera = getCamera([0.1, 4, -1], [0, 0, -1], [0, 1, 0], 90, width / height)
+  const lookfrom = [3, 3, 2]
+  const lookat = [0, 0, -1]
+  const focus = length(minus(lookfrom, lookat)) 
+  const camera = getCamera(lookfrom, lookat, [0, 1, 0], 20, width / height, focus)
 
   const screenRay = getScreenRay(camera)
   
