@@ -1,7 +1,8 @@
 import { add, cross, minus, multiple, unit } from "./vec3.js"
 import { random } from './materials/helper.js'
 
-export const getCamera = (lookfrom, lookat, vup, vfov, aspect, focus) => {
+export const getCamera = (lookfrom, lookat, vup, vfov, aspect, aperture, focus) => {
+  aperture = aperture / 2
   const theta = vfov * Math.PI / 180
   const halfHeight = Math.tan(theta / 2) * focus
   const halfWidth = aspect * halfHeight
@@ -20,6 +21,7 @@ export const getCamera = (lookfrom, lookat, vup, vfov, aspect, focus) => {
     horizontal,
     vertical,
     origin,
+    aperture,
     u,
     v
   }
@@ -30,11 +32,12 @@ export const getScreenRay = (camera) => (s, t) => {
     lowerLeftCorner,
     horizontal,
     vertical,
+    aperture,
     origin,
     u,
     v
   } = camera
-  const [randX, randY] = random()
+  const [randX, randY] = multiple(random(), aperture) 
   const offset = add(multiple(u, randX), multiple(v, randY))
   return [add(origin, offset), minus(add(lowerLeftCorner, multiple(s, horizontal), multiple(t, vertical)), add(origin, offset))]
 }

@@ -43,23 +43,45 @@ export function draw(canvas) {
   const ns =  10
   const ctx = canvas.getContext('2d')
   const imgData = ctx.getImageData(0, 0, width, height)
-  const lookfrom = [3, 3, 2]
-  const lookat = [0, 0, -1]
-  const focus = length(minus(lookfrom, lookat)) 
-  const camera = getCamera(lookfrom, lookat, [0, 1, 0], 20, width / height, focus)
+  const lookfrom = [13, 3, 3]
+  const lookat = [0, 0, 0]
+  const focus = 10 
+  // length(minus(lookfrom, lookat)) 
+  const camera = getCamera(lookfrom, lookat, [0, 1, 0], 20, width / height, 0.1, focus)
 
   const screenRay = getScreenRay(camera)
   
   const data = imgData.data
 
-  let list = [
-    ball.createHit([0, 0, -1], 0.5, lambertian([0.1, 0.2, 0.5])),
-    ball.createHit([0, -100.5, -1], 100, lambertian([0.8, 0.8, 0])),
-    ball.createHit([-1, 0, -1], 0.5, dielectrics(1.5)),
-    ball.createHit([-1, 0, -1], -0.45, dielectrics(1.5)),
-    ball.createHit([1, 0, -1], 0.5, metal([0.8, 0.6, 0.2])),
-  ]
+  // let list = [
+  //   ball.createHit([0, 0, -1], 0.5, lambertian([0.1, 0.2, 0.5])),
+  //   ball.createHit([0, -100.5, -1], 100, lambertian([0.8, 0.8, 0])),
+  //   ball.createHit([-1, 0, -1], 0.5, dielectrics(1.5)),
+  //   ball.createHit([-1, 0, -1], -0.45, dielectrics(1.5)),
+  //   ball.createHit([1, 0, -1], 0.5, metal([0.8, 0.6, 0.2])),
+  // ]
 
+    
+  let list = [ball.createHit([0, -1000, -1], 1000, lambertian([0.5, 0.5, 0.5]))]
+
+  for (let a = -11; a < 11; a ++) {
+    for (let b = -11; b < 11; b ++) {
+      let choose = Math.random()
+      let center = [a + 0.9 * Math.random(), 0.2, b + 0.9 * Math.random()]
+      if (length(minus(center, [4, 0.2, 0])) > 0.9) {
+        if (choose < 0.8) // diffuse
+        list.push(ball.createHit(center, 0.2, lambertian([Math.random() * Math.random(), Math.random() * Math.random(), Math.random() * Math.random()])))
+      } else if (choose < 0.95) {
+        list.push(ball.createHit(center, 0.2, metal([0.5 * (1 + Math.random()), 0.5 * (1 + Math.random()), 0.5 * (1 + Math.random())])))
+      } else {
+        list.push(ball.createHit(center, 0.2, dielectrics(1.5)))
+      }
+    }
+  }
+
+  list.push(ball.createHit([0, 1, 0], 1, dielectrics(1.5)))
+  list.push(ball.createHit([-4, 1, 0], 1, lambertian([0.4, 0.2, 0.5])))
+  list.push(ball.createHit([4, 1, 0], 1, metal([0.7, 0.6, 0.5])))
 
   for (let j = 0; j < height; j ++) {
     for (let i = 0; i < width; i ++) {
