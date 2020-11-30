@@ -1,6 +1,6 @@
 import { add, multiple, unit, minus, dot, divide } from "./vec3.js"
 import * as ball from './graphics/ball.js'
-import { getScreenRay } from './camera.js'
+import { getCamera, getScreenRay } from './camera.js'
 import { scatter as lambertian } from './materials/lambertian.js'
 import { scatter as metal } from './materials/metal.js'
 import { scatter as dielectrics } from './materials/dielectrics.js'
@@ -43,7 +43,9 @@ export function draw(canvas) {
   const ns =  10
   const ctx = canvas.getContext('2d')
   const imgData = ctx.getImageData(0, 0, width, height)
-  let depth = 50
+  const camera = getCamera([0.1, 4, -1], [0, 0, -1], [0, 1, 0], 90, width / height)
+
+  const screenRay = getScreenRay(camera)
   
   const data = imgData.data
 
@@ -55,6 +57,7 @@ export function draw(canvas) {
     ball.createHit([1, 0, -1], 0.5, metal([0.8, 0.6, 0.2])),
   ]
 
+
   for (let j = 0; j < height; j ++) {
     for (let i = 0; i < width; i ++) {
       let c = [0, 0, 0]
@@ -62,7 +65,7 @@ export function draw(canvas) {
         let u = (i + Math.random()) / width
         let v = ((height - j) + Math.random()) / height
         
-        let r = getScreenRay(u, v)
+        let r = screenRay(u, v)
         c = add(c, color(r, list, 0)) 
       }
 
